@@ -1,0 +1,26 @@
+---
+- name: Installer Docker via script officiel
+  shell: curl -fsSL https://get.docker.com | sh
+  become: yes
+
+- name: Ajouter l'utilisateur au groupe docker
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: yes
+
+- name: Démarrer et activer Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Lancer les 3 containers
+  shell: |
+    docker ps -a --format '{{ '{{' }}.Names{{ '}}' }}' | grep -q "{{ item.name }}" \
+    && docker start {{ item.name }} \
+    || docker run -d --name {{ item.name }} --restart always -p {{ item.port }}:80 -e APP_ENV={{ item.env }} {{ item.image }}
+  loop: "{{ containers }}"
+  become: yes

@@ -1,0 +1,23 @@
+ansible_python_interpreter: /usr/bin/python3
+
+vm1_ip: 192.168.1.190
+vm2_ip: 192.168.1.138
+
+containers:
+  - name: app-test
+    image: nginx:latest
+    port: 3001
+    env: test
+    nginx_port: 8080
+
+  - name: app-preprod
+    image: nginx:latest
+    port: 3002
+    env: preprod
+    nginx_port: 8081
+
+  - name: app-prod
+    image: nginx:latest
+    port: 3003
+    env: prod
+    nginx_port: 80

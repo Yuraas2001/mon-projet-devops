@@ -1,0 +1,37 @@
+---
+- name: Installer Nginx
+  apt:
+    name: nginx
+    state: present
+  become: yes
+
+- name: Supprimer le vhost par défaut
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: yes
+
+- name: Déployer la config load balancer
+  template:
+    src: lb_vhost.conf.j2
+    dest: "/etc/nginx/sites-available/{{ item.name }}.conf"
+    mode: '0644'
+  loop: "{{ containers }}"
+  become: yes
+  notify: reload nginx
+
+- name: Activer les vhosts
+  file:
+    src: "/etc/nginx/sites-available/{{ item.name }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ item.name }}.conf"
+    state: link
+  loop: "{{ containers }}"
+  become: yes
+  notify: reload nginx
+
+- name: Démarrer Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  become: yes

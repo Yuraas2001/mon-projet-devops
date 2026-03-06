@@ -1,0 +1,21 @@
+upstream {{ item.name }}_backend {
+    server {{ vm1_ip }}:{{ item.port }};
+    server {{ vm2_ip }}:{{ item.port }};
+}
+
+server {
+    listen {{ item.nginx_port }};
+    server_name {{ item.env }}.local;
+
+    location / {
+        proxy_pass http://{{ item.name }}_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_next_upstream error timeout http_500 http_502 http_503;
+        proxy_connect_timeout 2s;
+    }
+
+    access_log /var/log/nginx/{{ item.name }}_access.log;
+    error_log  /var/log/nginx/{{ item.name }}_error.log;
+}

@@ -1,0 +1,9 @@
+---
+- name: Déploiement complet - 2 VMs redondantes
+  hosts: vms
+  gather_facts: yes
+
+  roles:
+    - common
+    - docker
+    - nginx

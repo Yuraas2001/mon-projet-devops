@@ -1,0 +1,19 @@
+---
+- name: Mise a jour apt
+  apt:
+    update_cache: yes
+    upgrade: dist
+  become: yes
+
+- name: Installer les paquets de base
+  apt:
+    name:
+      - curl
+      - wget
+      - git
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - python3-pip
+    state: present
+  become: yes
