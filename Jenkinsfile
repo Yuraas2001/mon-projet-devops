@@ -7,9 +7,9 @@ pipeline {
                 echo 'Code récupéré depuis GitHub'
             }
         }
-        stage('Packer - Build image') {
+      stage('Packer - Build image') {
             steps {
-                sh 'cd packer-lab && packer build debian.pkr.hcl'
+                echo 'Packer - Build image simulé '
             }
         }
         stage('Terraform - Crée les VMs') {
